@@ -12,7 +12,7 @@
 \let\uk=\emph
 \def\aspas#1{``#1"}
 %================= lhs2tex=====================================================%
-%include polycode.fmt 
+%include polycode.fmt
 %format (div (x)(y)) = x "\div " y
 %format succ = "\succ "
 %format ==> = "\Longrightarrow "
@@ -48,7 +48,7 @@
 %format (anaA (f) (g)) = "\ana{" f "~" g "}_A"
 %format (cataB (f) (g)) = "\cata{" f "~" g "}_B"
 %format (anaB (f) (g)) = "\ana{" f "~" g "}_B"
-%format Either a b = a "+" b 
+%format Either a b = a "+" b
 %format fmap = "\mathsf{fmap}"
 %format NA   = "\textsc{na}"
 %format NB   = "\textsc{nb}"
@@ -115,11 +115,11 @@
 \begin{tabular}{ll}
 \textbf{Grupo} nr. & 99 (preencher)
 \\\hline
-a11111 & Nome1 (preencher)	
+a11111 & Nome1 (preencher)
 \\
-a22222 & Nome2 (preencher)	
+a22222 & Nome2 (preencher)
 \\
-a33333 & Nome3 (preencher)	
+a33333 & Nome3 (preencher)
 \end{tabular}
 \end{center}
 
@@ -131,7 +131,7 @@ parte-se de um repertório de \emph{combinadores} que formam uma álgebra da
 programação (conjunto de leis universais e seus corolários) e usam-se esses
 combinadores para construir programas \emph{composicionalmente}, isto é,
 agregando programas já existentes.
-  
+
 Na sequência pedagógica dos planos de estudo dos dois cursos que têm
 esta disciplina, restringe-se a aplicação deste método à programação
 funcional em \Haskell. Assim, o presente trabalho prático coloca os
@@ -172,10 +172,10 @@ o ``kit'' básico, escrito em \Haskell, para realizar o trabalho. Basta executar
 \begin{code}
 {-# OPTIONS_GHC -XNPlusKPatterns #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving, DeriveDataTypeable, FlexibleInstances #-}
-module Cp1819t where 
+module Cp1819t where
 import Cp
 import List  hiding (fac)
-import Nat  
+import Nat
 import Data.List hiding (find)
 import Data.Typeable
 import Data.Ratio
@@ -273,7 +273,7 @@ muito simples: escolheu-se a das expressões aritméticas com inteiros,
 Como representação interna adopta-se o seguinte tipo polinomial, igualmente simples:
 %
 \begin{spec}
-data Expr = Num Int | Bop Expr Op Expr 
+data Expr = Num Int | Bop Expr Op Expr
 data Op = Op String
 \end{spec}
 
@@ -295,9 +295,9 @@ prop_neutro1 = calcula . addZero .==. calcula where
             addZero e = Bop (Num 0) (Op "+") e
 prop_neutro2 :: Expr -> Bool
 prop_neutro2 = calcula . addZero .==. calcula where
-            addZero e = Bop e (Op "+") (Num 0) 
+            addZero e = Bop e (Op "+") (Num 0)
 \end{code}
-\end{propriedade}  
+\end{propriedade}
 \begin{propriedade}
 As operações de soma e multiplicação são comutativas.
 \begin{code}
@@ -305,7 +305,7 @@ prop_comuta = calcula . mirror .==. calcula where
             mirror = cataExpr (either Num g2)
             g2 = (uncurry (uncurry Bop)) . (swap >< id) . assocl . (id >< swap)
 \end{code}
-\end{propriedade}  
+\end{propriedade}
 \end{itemize}
 \item
 Defina como \{cata, ana ou hilo\}-morfismos as funções
@@ -322,7 +322,7 @@ Tp4> compile "3*(2+4)"
 ["PUSH 3", "PUSH 2", "PUSH 4", "ADD", "MUL"]
 Tp4> compile "(3*2)+4"
 ["PUSH 3", "PUSH 2", "MUL", "PUSH 4", "ADD"]
-Tp4> 
+Tp4>
 \end{verbatim}
 \item |show' :: Expr -> String| - gera a representação textual
       de uma |Expr| pode encarar-se como o \uk{pretty printer}
@@ -334,7 +334,7 @@ tal como a propriedade seguinte descreve:
 prop_inv :: Expr -> Bool
 prop_inv = p1 . head . readExp . show' .==. id
 \end{code}
-\end{propriedade}  
+\end{propriedade}
 \end{itemize}
 %% \item Generalize o tipo |Expr| de forma a admitir operadores
 %% unários (\eg\ \(-5\)) e repita os exercícios dos pontos anteriores.
@@ -342,7 +342,7 @@ prop_inv = p1 . head . readExp . show' .==. id
 
 \paragraph{Valorização}
 Em anexo é apresentado código \Haskell\ que permite declarar
-|Expr| como instância da classe |Read|. Neste contexto,  
+|Expr| como instância da classe |Read|. Neste contexto,
 |read| pode ser vista como o analisador
 sintático do nosso minúsculo compilador de expressões aritméticas.
 
@@ -360,7 +360,7 @@ caixas que contêm informação textual.
 Vamos designar essa linguagem por |L2D| e vamos defini-la como um tipo
  em \Haskell:
 \begin{code}
-type L2D = X Caixa Tipo 
+type L2D = X Caixa Tipo
 \end{code}
 onde |X| é a estrutura de dados
 \begin{code}
@@ -384,7 +384,7 @@ O que a linguagem |L2D| faz é agregar tais caixas tipográficas
 umas com as outras segundo padrões especificados por vários
 \aspas{tipos}, a saber,
 \begin{code}
-data Tipo = V | Vd | Ve | H | Ht | Hb 
+data Tipo = V | Vd | Ve | H | Ht | Hb
 \end{code}
 com o seguinte significado:
 \begin{itemize}
@@ -449,7 +449,7 @@ A informação mais relevante deste tipo é a referente à lista de
 ``caixas posicionadas'' (tipo |(Origem,Caixa)|). Regista-se aí a origem
 da caixa que, com a informação da sua altura e comprimento, permite
 definir todos os seus pontos (consideramos as caixas sempre paralelas
-aos eixos). 
+aos eixos).
 
 \begin{enumerate}
 \item Forneça a definição da função |calc_origems|, que calcula as
@@ -478,14 +478,14 @@ Disponibiliza-se também a função
 display :: G.Picture -> IO ()
 \end{spec}
 que dado um valor do tipo |G.picture| abre uma janela com esse valor desenhado. O objectivo
-final deste exercício é implementar então uma função 
+final deste exercício é implementar então uma função
 \begin{spec}
 mostra_caixas :: (L2D,Origem) -> IO ()
 \end{spec}
 que dada uma frase da linguagem |L2D| e coordenadas iniciais apresenta
 o respectivo desenho no ecrã.
 %
-\textbf{Sugestão}: 
+\textbf{Sugestão}:
 Use a função |G.pictures| disponibilizada na biblioteca \gloss{Gloss}.
 
 \Problema
@@ -538,7 +538,7 @@ Seguindo a regra acima, calcula-se de imediato a seguinte implementação, em Ha
 \begin{code}
 f' a b c = p1 . for loop init where
   loop(f,k) = (f+k,k+2*a)
-  init = (c,a+b) 
+  init = (c,a+b)
 \end{code}
 
 Qual é o assunto desta questão, então? Considerem fórmula que dá a série de Taylor da
@@ -546,7 +546,7 @@ função coseno:
 \begin{eqnarray*}
 	cos\ x = \sum_{i=0}^\infty \frac{(-1)^i}{(2i)!} x^{2i}
 \end{eqnarray*}
-Pretende-se o ciclo-\textsf{for} que implementa a função 
+Pretende-se o ciclo-\textsf{for} que implementa a função
 |cos' x n| que dá o valor dessa série tomando |i| até |n| inclusivé:
 \begin{spec}
 cos' x = cdots . for loop init where cdots
@@ -605,7 +605,7 @@ pode ser um binário, um texto, uma colecção de dados, etc.
 
 A definição das usuais funções |inFS| e |recFS| para este tipo é a seguinte:
 \begin{code}
-inFS = FS . map (id >< inNode) 
+inFS = FS . map (id >< inNode)
 inNode = either File Dir
 
 recFS f = baseFS id id f
@@ -632,13 +632,13 @@ O que é para fazer:
     que não existem identificadores repetidos dentro da mesma directoria). \\
     |check :: FS a b -> Bool|
   \begin{propriedade}
-    A integridade de um sistema de ficheiros não depende da ordem em que os    
+    A integridade de um sistema de ficheiros não depende da ordem em que os
     últimos são listados na sua directoria:
 \begin{code}
 prop_check :: FS String String -> Bool
 prop_check = check . (cataFS (inFS . reverse)).==. check
 \end{code}
-  \end{propriedade}  
+  \end{propriedade}
   \item Recolha do conteúdo de todos os ficheiros num arquivo indexado pelo \emph{path}.\\
     |tar :: FS a b -> [(Path a, b)]|
   \begin{propriedade}
@@ -646,9 +646,9 @@ prop_check = check . (cataFS (inFS . reverse)).==. check
     listados pela função |tar|.
 \begin{code}
 prop_tar :: FS String String -> Bool
-prop_tar = length . tar .==. conta 
+prop_tar = length . tar .==. conta
 \end{code}
-  \end{propriedade}  
+  \end{propriedade}
   \item Transformação de um arquivo com o conteúdo dos ficheiros
     indexado pelo \emph{path} num sistema de ficheiros.\\
     |untar :: [(Path a, b)] -> FS a b| \\
@@ -662,7 +662,7 @@ prop_untar = validPaths .==>. ((length . tar . untar) .==. length)
 validPaths :: [(Path String, String)] -> Bool
 validPaths = (== 0) . length . (filter (\(a,_) -> length a == 0))
 \end{code}
-\end{propriedade}  
+\end{propriedade}
   \item Localização de todos os \emph{paths} onde existe um
     determinado ficheiro.\\
     |find :: a -> FS a b -> [Path a]|
@@ -670,26 +670,26 @@ validPaths = (== 0) . length . (filter (\(a,_) -> length a == 0))
     A composição |tar . untar| preserva todos os ficheiros no sistema.
 \begin{code}
 prop_find :: String -> FS String String -> Bool
-prop_find = curry $ 
+prop_find = curry $
       length . (uncurry find) .==. length . (uncurry find) . (id >< (untar . tar))
 \end{code}
-  \end{propriedade}  
+  \end{propriedade}
   \item Criação de um novo ficheiro num determinado \emph{path}.\\
     |new :: Path a -> b -> FS a b -> FS a b|
   \begin{propriedade}
 A adição de um ficheiro não existente no sistema não origina ficheiros duplicados.
 \begin{code}
 prop_new :: ((Path String,String), FS String String) -> Property
-prop_new = ((validPath .&&&. notDup) .&&&. (check . p2)) .==>. 
+prop_new = ((validPath .&&&. notDup) .&&&. (check . p2)) .==>.
       (checkFiles . (uncurry (uncurry new)))  where
       validPath = (/=0) . length . p1 . p1
       notDup = not . (uncurry elem) . (p1 >< ((fmap p1) . tar))
 \end{code}
 \textbf{Questão}: Supondo-se que no código acima se substitui a propriedade
 |checkFiles| pela propriedade mais fraca |check|, será que a propriedade
-|prop_new| ainda é válida? Justifique a sua resposta. 
+|prop_new| ainda é válida? Justifique a sua resposta.
 \end{propriedade}
- 
+
 \begin{propriedade}
 	A listagem de ficheiros logo após uma adição nunca poderá ser menor que a listagem
 	de ficheiros antes dessa mesma adição.
@@ -698,7 +698,7 @@ prop_new2 :: ((Path String,String), FS String String) -> Property
 prop_new2 = validPath .==>. ((length . tar . p2) .<=. (length . tar . (uncurry (uncurry new)))) where
       validPath = (/=0) . length . p1 . p1
 \end{code}
-  \end{propriedade}  
+  \end{propriedade}
   \item Duplicação de um ficheiro.\\
     |cp :: Path a -> Path a -> FS a b -> FS a b|
   \begin{propriedade}
@@ -707,7 +707,7 @@ prop_new2 = validPath .==>. ((length . tar . p2) .<=. (length . tar . (uncurry (
 prop_cp :: ((Path String, Path String),  FS String String) -> Bool
 prop_cp =   length . tar . p2 .<=. length . tar . (uncurry (uncurry cp))
 \end{code}
-  \end{propriedade}  
+  \end{propriedade}
   \item Eliminação de um ficheiro.\\
     |rm :: Path a -> FS a b -> FS a b|
 
@@ -724,24 +724,24 @@ prop_rm = (uncurry rm ) . (split p1 (uncurry rm)) .==. (uncurry rm)
 Adicionar um ficheiro e de seguida remover o mesmo não origina novos ficheiros no sistema.
 \begin{code}
 prop_rm2 :: ((Path String,String), FS String String) -> Property
-prop_rm2 = validPath  .==>. ((length . tar . (uncurry rm) . (split (p1. p1) (uncurry (uncurry new)))) 
+prop_rm2 = validPath  .==>. ((length . tar . (uncurry rm) . (split (p1. p1) (uncurry (uncurry new))))
          .<=. (length . tar . p2)) where
          validPath = (/=0) . length . p1 . p1
 \end{code}
-\end{propriedade}  
+\end{propriedade}
   \end{enumerate}
 \end{enumerate}
 
-\paragraph{Valorização} 
+\paragraph{Valorização}
 
 Definir uma função para visualizar em \graphviz{Graphviz}
 a estrutura de um sistema de ficheiros. A Figura~\ref{ex_prob1}, por exemplo,
 apresenta a estrutura de um sistema com precisamente dois ficheiros dentro
-de uma directoria chamada |"d1"|. 
+de uma directoria chamada |"d1"|.
 
 Para realizar este exercício será necessário apenas  escrever o anamorfismo
 \begin{quote}
-|cFS2Exp :: (a, FS a b) -> (Exp () a)| 
+|cFS2Exp :: (a, FS a b) -> (Exp () a)|
 \end{quote}
 que converte a estrutura de um sistema de ficheiros numa árvore de expressões
 descrita em \href{http://wiki.di.uminho.pt/twiki/pub/Education/CP/MaterialPedagogico/Exp.hs}{Exp.hs}.
@@ -762,7 +762,7 @@ A função |dotFS| depois tratará de passar a estrutura do sistema de ficheiros
 \appendix
 
 \section{Como exprimir cálculos e diagramas em LaTeX/lhs2tex}
-Estudar o texto fonte deste trabalho para obter o efeito:\footnote{Exemplos tirados de \cite{Ol18}.} 
+Estudar o texto fonte deste trabalho para obter o efeito:\footnote{Exemplos tirados de \cite{Ol18}.}
 \begin{eqnarray*}
 \start
 	|id = split f g|
@@ -785,8 +785,8 @@ Estudar o texto fonte deste trabalho para obter o efeito:\footnote{Exemplos tira
 \qed
 \end{eqnarray*}
 
-Os diagramas podem ser produzidos recorrendo à \emph{package} \LaTeX\ 
-\href{https://ctan.org/pkg/xymatrix}{xymatrix}, por exemplo: 
+Os diagramas podem ser produzidos recorrendo à \emph{package} \LaTeX\
+\href{https://ctan.org/pkg/xymatrix}{xymatrix}, por exemplo:
 \begin{eqnarray*}
 \xymatrix@@C=2cm{
     |Nat0|
@@ -810,7 +810,7 @@ onde se pretende implementar um ciclo que implemente
 o cálculo da aproximação até |i=n| da função exponencial $exp\ x = e^x$
 via série de Taylor:
 \begin{eqnarray}
-	exp\ x 
+	exp\ x
 & = &
 	\sum_{i=0}^{\infty} \frac {x^i} {i!}
 \end{eqnarray}
@@ -843,7 +843,7 @@ e' x = prj . for loop init where
 \subsection*{Problema 1}
 Tipos:
 \begin{code}
-data Expr = Num Int 
+data Expr = Num Int
                | Bop Expr Op Expr  deriving  (Eq,Show)
 
 data Op = Op String deriving (Eq,Show)
@@ -862,7 +862,7 @@ instance Read Expr where
 Read para Exp's:
 \begin{code}
 readOp :: String -> [(Op,String)]
-readOp input = do 
+readOp input = do
                  (x,y) <- lex input
                  return ((Op x),y)
 
@@ -884,16 +884,16 @@ Combinadores:
 
 depois :: (ReadS a) -> (ReadS b) -> ReadS (a,b)
 depois _ _ [] = []
-depois r1 r2 input = [((x,y),i2) | (x,i1) <- r1 input , 
+depois r1 r2 input = [((x,y),i2) | (x,i1) <- r1 input ,
                                    (y,i2) <- r2 i1]
 
 readSeq :: (ReadS a) -> ReadS [a]
-readSeq r input 
+readSeq r input
   = case (r input) of
     [] -> [([],input)]
     l -> concat (map continua l)
          where continua (a,i) = map (c a) (readSeq r i)
-               c x (xs,i) = ((x:xs),i)                     
+               c x (xs,i) = ((x:xs),i)
 
 ou :: (ReadS a) -> (ReadS a) -> ReadS a
 ou r1 r2 input = (r1 input) ++ (r2 input)
@@ -912,8 +912,8 @@ chavetas = parentesis '{' '}'
 
 parentesis :: Char -> Char -> (ReadS a) -> ReadS a
 parentesis _ _ _ [] = []
-parentesis ap pa r input 
-  = do 
+parentesis ap pa r input
+  = do
       ((_,(x,_)),c) <- ((readConst [ap]) `depois` (
                         r                `depois` (
                         readConst [pa])))           input
@@ -951,10 +951,10 @@ ex3Caixas = G.display (G.InWindow "Problema 4" (400, 400) (40, 40)) G.white mtes
           gbox2 = Unid ((100,300),("F",col_green))
           rbox1 = Unid ((300,50),("C",G.red))
           rbox2 = Unid ((200,100),("G",G.red))
-          wbox1 = Unid ((450,200),("",G.white)) 
+          wbox1 = Unid ((450,200),("",G.white))
           ybox1 = Unid ((100,200),("D",G.yellow))
           ybox2 = Unid ((100,300),("H",G.yellow))
-          bot = Comp Hb wbox1 bbox2 
+          bot = Comp Hb wbox1 bbox2
           top = (Comp Ve (Comp Hb bbox1 gbox1) (Comp Hb rbox1 (Comp H ybox1 rbox2)))
 \end{code}
 A seguinte função cria uma caixa a partir dos seguintes parâmetros: origem,
@@ -963,18 +963,18 @@ largura, altura, etiqueta e côr de preenchimento.
 crCaixa :: Origem  -> Float -> Float -> String -> G.Color -> G.Picture
 crCaixa (x,y) w h l c = G.Translate (x+(w/2)) (y+(h/2)) $  G.pictures [caixa, etiqueta] where
                     caixa = G.color c (G.rectangleSolid w h)
-                    etiqueta = G.translate calc_trans_x calc_trans_y $ 
+                    etiqueta = G.translate calc_trans_x calc_trans_y $
                              G.Scale calc_scale calc_scale $ G.color G.black $ G.Text l
                     calc_trans_x = (- ((fromIntegral (length l)) * calc_scale) / 2 )*base_shift_x
                     calc_trans_y = (- calc_scale / 2)*base_shift_y
-                    calc_scale = bscale * (min h w) 
+                    calc_scale = bscale * (min h w)
                     bscale = 1/700
                     base_shift_y = 100
                     base_shift_x = 64
 \end{code}
 Função para visualizar resultados gráficos:
 \begin{code}
-display = G.display (G.InWindow "Problema 4" (400, 400) (40, 40)) G.white 
+display = G.display (G.InWindow "Problema 4" (400, 400) (40, 40)) G.white
 \end{code}
 
 \subsection*{Problema 4}
@@ -985,7 +985,7 @@ mkdir (x,y) = FS [(x, Dir y)]
 mkfile (x,y) = FS [(x, File y)]
 
 joinDupDirs :: (Eq a) => (FS a b) -> (FS a b)
-joinDupDirs  = anaFS (prepOut . (id >< proc) . prepIn) where 
+joinDupDirs  = anaFS (prepOut . (id >< proc) . prepIn) where
          prepIn = (id >< (map (id >< outFS))) . sls . (map distr) . outFS
          prepOut = (map undistr) . (uncurry (++)) . ((map i1) >< (map i2)) . (id >< (map (id >< inFS)))
          proc = concat . (map joinDup) . groupByName
@@ -1064,7 +1064,7 @@ instance (Arbitrary a, Arbitrary b) => Arbitrary (FS a b) where
    arbitrary = sized genfs  where
              genfs 0 = liftM (inFS . (map (id >< (i1)))) QuickCheck.arbitrary
              genfs n = oneof [liftM (inFS . (map (id >< (i1)))) QuickCheck.arbitrary,
-                     liftM (inFS . return . (id >< (i2))) (liftM2 (,) 
+                     liftM (inFS . return . (id >< (i2))) (liftM2 (,)
                      QuickCheck.arbitrary (genfs (n - 1))),
                      liftM3 genAux QuickCheck.arbitrary (genfs (n - 1)) (genfs (n - 1))]
              genAux a x y = inFS [(a, i2 x), (a, i2 y)]
@@ -1073,9 +1073,9 @@ instance Arbitrary Expr where
    arbitrary = (genExpr 10)  where
              genExpr 0 = liftM (inExpr . i1) QuickCheck.arbitrary
              genExpr n = oneof [liftM (inExpr . i1) QuickCheck.arbitrary,
-                       liftM (inExpr . i2 . (uncurry genAux1)) 
+                       liftM (inExpr . i2 . (uncurry genAux1))
                        $ liftM2 (,)  (genExpr (n-1)) (genExpr (n-1)),
-                       liftM (inExpr . i2 . (uncurry genAux2)) 
+                       liftM (inExpr . i2 . (uncurry genAux2))
                        $ liftM2 (,)  (genExpr (n-1)) (genExpr (n-1))
                      ]
              genAux1 x y = (Op "+",(x,y))
@@ -1119,7 +1119,7 @@ run = do { system "ghc cp1819t" ; system "./cp1819t" }
 \section{Soluções dos alunos}\label{sec:resolucao}
 Os alunos devem colocar neste anexo as suas soluções aos exercícios
 propostos, de acordo com o "layout" que se fornece. Não podem ser
-alterados os nomes ou tipos das funções dadas, mas pode ser adicionado texto e/ou 
+alterados os nomes ou tipos das funções dadas, mas pode ser adicionado texto e/ou
 outras funções auxiliares que sejam necessárias.
 
 \subsection*{Problema 1}
@@ -1127,10 +1127,11 @@ outras funções auxiliares que sejam necessárias.
 \begin{code}
 
 inExpr :: Either Int (Op,(Expr,Expr)) -> Expr
-inExpr = undefined
+inExpr = either Num Bop --falta funçao que pegue num Bop e coloca na forma: (Op,(Expr,Expr))
 
 outExpr :: Expr -> Either Int (Op,(Expr,Expr))
-outExpr = undefined
+outExpr (Num a) = i1 a
+outExpr (Bop e1 o e2) = i2 (o,(e1,e2))
 
 recExpr f = undefined
 
@@ -1142,7 +1143,7 @@ calcula = undefined
 show' = undefined
 
 compile :: String -> Codigo
-compile = undefined 
+compile = undefined
 \end{code}
 
 \subsection*{Problema 2}
@@ -1169,7 +1170,7 @@ calcOrigins :: ((X Caixa Tipo),Origem) -> X (Caixa,Origem) ()
 calcOrigins = undefined
 
 calc :: Tipo -> Origem -> (Float, Float) -> Origem
-calc = undefined 
+calc = undefined
 
 caixasAndOrigin2Pict = undefined
 \end{code}
