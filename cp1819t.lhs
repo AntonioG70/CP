@@ -1127,13 +1127,13 @@ outras funções auxiliares que sejam necessárias.
 \begin{code}
 
 inExpr :: Either Int (Op,(Expr,Expr)) -> Expr
-inExpr = either Num Bop --falta funçao que pegue num Bop e coloca na forma: (Op,(Expr,Expr))
+inExpr = undefined
 
 outExpr :: Expr -> Either Int (Op,(Expr,Expr))
 outExpr (Num a) = i1 a
 outExpr (Bop e1 o e2) = i2 (o,(e1,e2))
 
-recExpr f = undefined
+recExpr f = baseExpr id f
 
 cataExpr g = undefined
 
