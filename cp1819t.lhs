@@ -1126,8 +1126,18 @@ outras funções auxiliares que sejam necessárias.
 
 \begin{code}
 
+--data Expr = Num Int
+--               | Bop Expr Op Expr  deriving  (Eq,Show)
+--data Op = Op String deriving (Eq,Show)
+
 inExpr :: Either Int (Op,(Expr,Expr)) -> Expr
-inExpr = undefined
+inExpr = either aux1 aux2
+
+aux1 :: Int -> Expr
+aux1 x = (Num x)
+
+aux2 :: (Op,(Expr,Expr)) -> Expr
+aux2 (o,(e1,e2)) =  Bop e1 o e2
 
 outExpr :: Expr -> Either Int (Op,(Expr,Expr))
 outExpr (Num a) = i1 a
@@ -1135,10 +1145,19 @@ outExpr (Bop e1 o e2) = i2 (o,(e1,e2))
 
 recExpr f = baseExpr id f
 
-cataExpr g = undefined
+cataExpr g = g . (recExpr (cataExpr g)) . outExpr
 
 calcula :: Expr -> Int
 calcula = undefined
+
+g :: Either Int (Op,(Expr,Expr)) -> Int
+g = either g1 g2
+
+g1 :: Int -> Int
+g1 x = x
+
+g2 :: (Op,(Expr,Expr)) -> Int
+g2 (o,(e1,e2)) = readExp((o,(e1,e2)))
 
 show' = undefined
 
@@ -1153,7 +1172,8 @@ inL2D :: Either a (b, (X a b,X a b)) -> X a b
 inL2D = undefined
 
 outL2D :: X a b -> Either a (b, (X a b,X a b))
-outL2D = undefined
+outL2D (Unid a) =  i1 a
+outL2D (Comp b (a1) (a2)) =  i2 (b, (a1 ,a2))
 
 recL2D f = undefined
 

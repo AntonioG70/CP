@@ -57,4 +57,3 @@ gbt = f where
    f(n+1,x) = i2(x,((n,False:x),(n,True:x)))
 
 genBools = hyloFTree flt gbt
-
