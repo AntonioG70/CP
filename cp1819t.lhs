@@ -1148,16 +1148,18 @@ recExpr f = baseExpr id f
 cataExpr g = g . (recExpr (cataExpr g)) . outExpr
 
 calcula :: Expr -> Int
-calcula = undefined
+calcula = cataExpr gene
 
-g :: Either Int (Op,(Expr,Expr)) -> Int
-g = either g1 g2
+gene :: Either Int (Op,(Int,Int)) -> Int
+gene = either g1 g2
 
 g1 :: Int -> Int
 g1 x = x
 
-g2 :: (Op,(Expr,Expr)) -> Int
-g2 (o,(e1,e2)) = readExp((o,(e1,e2)))
+g2 :: (Op,(Int,Int)) -> Int
+g2 (Op "+",(n1,n2)) = n1 + n2
+g2 (Op "-",(n1,n2)) = n1 - n2
+g2 (Op "*",(n1,n2)) = n1 * n2
 
 show' = undefined
 
