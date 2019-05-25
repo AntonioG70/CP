@@ -1126,10 +1126,6 @@ outras funções auxiliares que sejam necessárias.
 
 \begin{code}
 
---data Expr = Num Int
---               | Bop Expr Op Expr  deriving  (Eq,Show)
---data Op = Op String deriving (Eq,Show)
-
 inExpr :: Either Int (Op,(Expr,Expr)) -> Expr
 inExpr = either aux1 aux2
 
@@ -1148,10 +1144,10 @@ recExpr f = baseExpr id f
 cataExpr g = g . (recExpr (cataExpr g)) . outExpr
 
 calcula :: Expr -> Int
-calcula = cataExpr gene
+calcula = cataExpr geneCalcula
 
-gene :: Either Int (Op,(Int,Int)) -> Int
-gene = either g1 g2
+geneCalcula :: Either Int (Op,(Int,Int)) -> Int
+geneCalcula = either g1 g2
 
 g1 :: Int -> Int
 g1 x = x
@@ -1161,7 +1157,18 @@ g2 (Op "+",(n1,n2)) = n1 + n2
 g2 (Op "-",(n1,n2)) = n1 - n2
 g2 (Op "*",(n1,n2)) = n1 * n2
 
-show' = undefined
+show' = cataExpr geneShow
+
+geneShow :: Either Int (Op,(String,String)) -> String
+geneShow = either g3 g4
+
+g3 :: Int -> String
+g3 x = show x
+
+g4 :: (Op,(String,String)) -> String
+g4 (Op "+",(s1,s2)) = "(" ++ s1 ++ " " ++ "+" ++ " " ++ s2 ++ ")"
+g4 (Op "-",(s1,s2)) = "(" ++ s1 ++ " " ++ "-" ++ " " ++ s2 ++ ")"
+g4 (Op "*",(s1,s2)) = "(" ++ s1 ++ " " ++ "*" ++ " " ++ s2 ++ ")"
 
 compile :: String -> Codigo
 compile = undefined
