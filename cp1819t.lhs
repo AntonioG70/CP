@@ -1172,19 +1172,28 @@ g4 (Op "*",(s1,s2)) = "(" ++ s1 ++ " " ++ "*" ++ " " ++ s2 ++ ")"
 
 outCompile :: String -> Either () (Expr,String)
 outCompile [] = i1 ()
-outCompile s = i2 (read s::Expr,s)
+outCompile s = i2 (read s::Expr,"")
 
-showGene :: (Expr,String) -> [String]
-showGene (Num a) = ["PUSH " ++ show a]
-showGene (Bop e1 (Op "+") e2) = showGene e1 ++ showGene e2 ++ ["ADD"]
-showGene (Bop e1 (Op "-") e2) = showGene e1 ++ showGene e2 ++ ["SUB"]
-showGene (Bop e1 (Op "*") e2) = showGene e1 ++ showGene e2 ++ ["MUL"]
+exprToStack :: (Expr,[String]) -> [String]
+exprToStack ((Num a),stack) = stack ++ ["PUSH " ++ show a]
+exprToStack ((Bop e1 (Op "+") e2),stack) = stack ++ (exprToStack (e1,stack) ++ exprToStack (e2,stack) ++ ["ADD"])
+exprToStack ((Bop e1 (Op "-") e2),stack) = stack ++ (exprToStack (e1,stack) ++ exprToStack (e2,stack) ++ ["SUB"])
+exprToStack ((Bop e1 (Op "*") e2),stack) = stack ++ (exprToStack (e1,stack) ++ exprToStack (e2,stack) ++ ["MUL"])
 
-geneCompile :: Either () (Expr,String) -> Codigo
-geneCompile = undefined
+nilToStack :: () -> [String]
+nilToStack () = []
+
+baseString f = id -|- (id >< f)
+
+recString f = baseString f
+
+geneCompile :: Either () (Expr,[String]) -> Codigo
+geneCompile = either nilToStack exprToStack
+
+cataCompile g = g . (recString (cataCompile g)) . outCompile
 
 compile :: String -> Codigo
-compile = undefined
+compile = cataCompile geneCompile
 
 \end{code}
 
