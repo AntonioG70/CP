@@ -1170,8 +1170,22 @@ g4 (Op "+",(s1,s2)) = "(" ++ s1 ++ " " ++ "+" ++ " " ++ s2 ++ ")"
 g4 (Op "-",(s1,s2)) = "(" ++ s1 ++ " " ++ "-" ++ " " ++ s2 ++ ")"
 g4 (Op "*",(s1,s2)) = "(" ++ s1 ++ " " ++ "*" ++ " " ++ s2 ++ ")"
 
+outCompile :: String -> Either () (Expr,String)
+outCompile [] = i1 ()
+outCompile s = i2 (read s::Expr,s)
+
+showGene :: (Expr,String) -> [String]
+showGene (Num a) = ["PUSH " ++ show a]
+showGene (Bop e1 (Op "+") e2) = showGene e1 ++ showGene e2 ++ ["ADD"]
+showGene (Bop e1 (Op "-") e2) = showGene e1 ++ showGene e2 ++ ["SUB"]
+showGene (Bop e1 (Op "*") e2) = showGene e1 ++ showGene e2 ++ ["MUL"]
+
+geneCompile :: Either () (Expr,String) -> Codigo
+geneCompile = undefined
+
 compile :: String -> Codigo
 compile = undefined
+
 \end{code}
 
 \subsection*{Problema 2}
