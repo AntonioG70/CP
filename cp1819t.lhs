@@ -1201,7 +1201,13 @@ compile = cataCompile geneCompile
 
 \begin{code}
 inL2D :: Either a (b, (X a b,X a b)) -> X a b
-inL2D = undefined
+inL2D = either auxInL2D1 auxInL2D2
+
+auxInL2D1 :: a -> X a b
+auxInL2D1 a = (Unid a)
+
+auxInL2D2 :: (b, (X a b,X a b)) -> X a b
+auxInL2D2 (b, (c1, c2)) =  (Comp b (auxInL2D2 c1) (auxInL2D2 c2))
 
 outL2D :: X a b -> Either a (b, (X a b,X a b))
 outL2D (Unid a) =  i1 a
