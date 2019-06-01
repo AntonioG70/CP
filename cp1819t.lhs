@@ -384,7 +384,7 @@ O que a linguagem |L2D| faz é agregar tais caixas tipográficas
 umas com as outras segundo padrões especificados por vários
 \aspas{tipos}, a saber,
 \begin{code}
-data Tipo = V | Vd | Ve | H | Ht | Hb
+data Tipo = V | Vd | Ve | H | Ht | Hb deriving Show
 \end{code}
 com o seguinte significado:
 \begin{itemize}
@@ -1207,7 +1207,10 @@ auxInL2D1 :: a -> X a b
 auxInL2D1 a = (Unid a)
 
 auxInL2D2 :: (b, (X a b,X a b)) -> X a b
-auxInL2D2 (b, (c1, c2)) =  (Comp b (auxInL2D2 c1) (auxInL2D2 c2))
+auxInL2D2 (b, (Comp c c1 c2, Comp d d1 d2)) =  (Comp b (auxInL2D2 (c, (c1,c2)))  (auxInL2D2 (d, (d1,d2))))
+auxInL2D2 (b, (a, Comp d d1 d2)) =  (Comp b a (auxInL2D2 (d, (d1,d2))))
+auxInL2D2 (b, (Comp c c1 c2, a)) =  (Comp b (auxInL2D2 (c, (c1,c2)))  a)
+auxInL2D2 (b, (a, c)) =  (Comp b a c)
 
 outL2D :: X a b -> Either a (b, (X a b,X a b))
 outL2D (Unid a) =  i1 a
