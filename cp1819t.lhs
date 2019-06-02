@@ -1218,7 +1218,7 @@ outL2D (Comp b (a1) (a2)) =  i2 (b, (a1 ,a2))
 
 baseL2D f g h  = f -|- (g  >< (h >< h))
 
-recL2D f = baseExpr id id f
+recL2D f = baseL2D id id f
 
 cataL2D g = g . (recL2D (cataL2D g)) . outL2D
 
