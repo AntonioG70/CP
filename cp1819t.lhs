@@ -1258,10 +1258,12 @@ escadinhasRed = (Right (Hb, (Comp Hb (Unid ((300,68),("C",G.red))) (Unid ((300,7
 \subsection*{Problema 3}
 Solução:
 \begin{code}
+
 cos' x = prj . for loop init where
-   loop = undefined
-   init = undefined
-   prj = undefined
+   loop (e,h,s,m) = (h+e,-x^2/s *h,18+m+s,m+8)
+   init = (1,-x^2/2,12,0)
+   prj (e,h,s,m) = e
+
 \end{code}
 
 \subsection*{Problema 4}
