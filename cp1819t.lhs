@@ -1226,8 +1226,22 @@ anaL2D g = inL2D . (recL2D (anaL2D g)) . g
 
 collectLeafs = undefined
 
+geneDimen :: Either Caixa (Tipo, ((Float, Float), (Float, Float))) -> (Float, Float)
+geneDimen = either geneDimen1 geneDimen2
+
+geneDimen1 :: Caixa -> (Float, Float)
+geneDimen1 ((dimx, dimy), (s, color)) = (fromIntegral(dimx), fromIntegral(dimy))
+
+geneDimen2 :: (Tipo, ((Float, Float), (Float, Float))) -> (Float, Float)
+geneDimen2 (Ht, ((dimx1, dimy1), (dimx2, dimy2))) = (dimx1 + dimx2, max dimy1 dimy2)
+geneDimen2 (Hb, ((dimx1, dimy1), (dimx2, dimy2))) = (dimx1 + dimx2, max dimy1 dimy2)
+geneDimen2 (H, ((dimx1, dimy1), (dimx2, dimy2))) = (dimx1 + dimx2, max dimy1 dimy2)
+geneDimen2 (Vd, ((dimx1, dimy1), (dimx2, dimy2))) = (max dimx1 dimx2, dimy1 + dimy2)
+geneDimen2 (Ve, ((dimx1, dimy1), (dimx2, dimy2))) = (max dimx1 dimx2, dimy1 + dimy2)
+geneDimen2 (V, ((dimx1, dimy1), (dimx2, dimy2))) = (max dimx1 dimx2, dimy1 + dimy2)
+
 dimen :: X Caixa Tipo -> (Float, Float)
-dimen = undefined
+dimen = cataL2D geneDimen
 
 calcOrigins :: ((X Caixa Tipo),Origem) -> X (Caixa,Origem) ()
 calcOrigins = undefined
@@ -1236,6 +1250,9 @@ calc :: Tipo -> Origem -> (Float, Float) -> Origem
 calc = undefined
 
 caixasAndOrigin2Pict = undefined
+
+escadinhasRed = (Right (Hb, (Comp Hb (Unid ((300,68),("C",G.red))) (Unid ((300,70),("C",G.red))), Comp Hb (Unid ((300,80),("C",G.red))) (Unid ((300,90),("C",G.red))))))
+
 \end{code}
 
 \subsection*{Problema 3}
