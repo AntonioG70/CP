@@ -1216,11 +1216,13 @@ outL2D :: X a b -> Either a (b, (X a b,X a b))
 outL2D (Unid a) =  i1 a
 outL2D (Comp b (a1) (a2)) =  i2 (b, (a1 ,a2))
 
-recL2D f = undefined
+baseL2D f g h  = f -|- (g  >< (h >< h))
 
-cataL2D g = undefined
+recL2D f = baseExpr id id f
 
-anaL2D g = undefined
+cataL2D g = g . (recL2D (cataL2D g)) . outL2D
+
+anaL2D g = inL2D . (recL2D (anaL2D g)) . g
 
 collectLeafs = undefined
 
