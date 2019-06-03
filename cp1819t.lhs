@@ -1224,7 +1224,17 @@ cataL2D g = g . (recL2D (cataL2D g)) . outL2D
 
 anaL2D g = inL2D . (recL2D (anaL2D g)) . g
 
-collectLeafs = undefined
+collectLeafs :: X a b -> [a]
+collectLeafs = cataL2D geneCollectLeafs
+
+geneCollectLeafs :: Either a (b, ([a],[a])) -> [a]
+geneCollectLeafs = either geneCollectLeafs1 geneCollectLeafs2
+
+geneCollectLeafs1 :: a -> [a]
+geneCollectLeafs1 a = [a]
+
+geneCollectLeafs2 :: (b, ([a],[a])) -> [a]
+geneCollectLeafs2 (b, (a1, a2)) = a1 ++ a2
 
 geneDimen :: Either Caixa (Tipo, ((Float, Float), (Float, Float))) -> (Float, Float)
 geneDimen = either geneDimen1 geneDimen2
@@ -1233,21 +1243,47 @@ geneDimen1 :: Caixa -> (Float, Float)
 geneDimen1 ((dimx, dimy), (s, color)) = (fromIntegral(dimx), fromIntegral(dimy))
 
 geneDimen2 :: (Tipo, ((Float, Float), (Float, Float))) -> (Float, Float)
-geneDimen2 (Ht, ((dimx1, dimy1), (dimx2, dimy2))) = (dimx1 + dimx2, max dimy1 dimy2)
-geneDimen2 (Hb, ((dimx1, dimy1), (dimx2, dimy2))) = (dimx1 + dimx2, max dimy1 dimy2)
+geneDimen2 (Ht, ((dimx1, dimy1), (dimx2, dimy2))) = (dimx1 + dimx2, dimy1 + dimy2)
+geneDimen2 (Hb, ((dimx1, dimy1), (dimx2, dimy2))) = (dimx1 + dimx2, max dimy1 (dimy2+dimy1/2))
 geneDimen2 (H, ((dimx1, dimy1), (dimx2, dimy2))) = (dimx1 + dimx2, max dimy1 dimy2)
-geneDimen2 (Vd, ((dimx1, dimy1), (dimx2, dimy2))) = (max dimx1 dimx2, dimy1 + dimy2)
-geneDimen2 (Ve, ((dimx1, dimy1), (dimx2, dimy2))) = (max dimx1 dimx2, dimy1 + dimy2)
+geneDimen2 (Vd, ((dimx1, dimy1), (dimx2, dimy2))) = (dimx1 + dimx2, dimy1 + dimy2)
+geneDimen2 (Ve, ((dimx1, dimy1), (dimx2, dimy2))) = (max dimx1 (dimx2+dimx1/2), dimy1 + dimy2)
 geneDimen2 (V, ((dimx1, dimy1), (dimx2, dimy2))) = (max dimx1 dimx2, dimy1 + dimy2)
 
 dimen :: X Caixa Tipo -> (Float, Float)
 dimen = cataL2D geneDimen
 
+outCalcOrigin :: ((X Caixa Tipo),Origem) -> Either Caixa (Origem, (X Caixa Tipo, Origem))
+outCalcOrigin (Unid a, ori) = i1 a
+outCalcOrigin (xct, ori) = i2 (ori, (xct, (0,0)))
+
+baseCalcOrigin f g h  = f -|- (g >< h)
+
+recCalcOrigin f = baseCalcOrigin id id f
+
+cataCalcOrigin g = g . (recCalcOrigin (cataCalcOrigin g)) . outCalcOrigin
+
 calcOrigins :: ((X Caixa Tipo),Origem) -> X (Caixa,Origem) ()
-calcOrigins = undefined
+calcOrigins = cataCalcOrigin geneCalcOrigin
+
+geneCalcOrigin :: Either Caixa (Origem, X (Caixa,Origem) ()) -> X (Caixa,Origem) ()
+geneCalcOrigin = either geneCalcOrigin1 geneCalcOrigin2
+
+geneCalcOrigin1 :: Caixa -> X (Caixa,Origem) ()
+geneCalcOrigin1 c = Unid (c,(0,0))
+
+geneCalcOrigin2 :: (Origem, X (Caixa,Origem) ()) -> X (Caixa,Origem) ()
+geneCalcOrigin2 (ori, Comp () (Unid (a, oria)) (Unid (b, orib))) = Comp () (Unid (a, oria + ori)) (Unid (b, orib + ori))
 
 calc :: Tipo -> Origem -> (Float, Float) -> Origem
-calc = undefined
+calc Ht ori (dimx,dimy) = ((fst ori) + dimx, (snd ori) + dimy)
+calc Hb ori (dimx,dimy) = ((fst ori) + dimx, (snd ori))
+calc H ori (dimx,dimy) = ((fst ori) + dimx, (snd ori) + dimy/2)
+calc Vd ori (dimx,dimy) = ((fst ori) + dimx, (snd ori) + dimy)
+calc Ve ori (dimx,dimy) = (dimx, (snd ori) + dimy)
+calc V ori (dimx,dimy) =  ((fst ori) + dimx/2, (snd ori) + dimy)
+
+
 
 caixasAndOrigin2Pict = undefined
 
