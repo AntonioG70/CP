@@ -1253,27 +1253,24 @@ geneDimen2 (V, ((dimx1, dimy1), (dimx2, dimy2))) = (max dimx1 dimx2, dimy1 + dim
 dimen :: X Caixa Tipo -> (Float, Float)
 dimen = cataL2D geneDimen
 
-outCalcOrigin :: ((X Caixa Tipo),Origem) -> Either Caixa (Origem, (X Caixa Tipo, Origem))
-outCalcOrigin (Unid a, ori) = i1 a
-outCalcOrigin (xct, ori) = i2 (ori, (xct, (0,0)))
+outCalcOrigin :: ((X Caixa Tipo),Origem) -> Either (Caixa, Origem) (Tipo, ((X Caixa Tipo, Origem),(X Caixa Tipo, Origem)))
+outCalcOrigin (Unid a, ori) = i1 (a, ori)
+outCalcOrigin (Comp tipo c1 c2, ori) = i2 (tipo, ((c1, ori), (c2,calc tipo ori (dimen c1))))
 
-baseCalcOrigin f g h  = f -|- (g >< h)
 
-recCalcOrigin f = baseCalcOrigin id id f
-
-cataCalcOrigin g = g . (recCalcOrigin (cataCalcOrigin g)) . outCalcOrigin
+cataCalcOrigin g = g . (recL2D (cataCalcOrigin g)) . outCalcOrigin
 
 calcOrigins :: ((X Caixa Tipo),Origem) -> X (Caixa,Origem) ()
 calcOrigins = cataCalcOrigin geneCalcOrigin
 
-geneCalcOrigin :: Either Caixa (Origem, X (Caixa,Origem) ()) -> X (Caixa,Origem) ()
+geneCalcOrigin :: Either (Caixa,Origem) (Tipo, (X (Caixa,Origem) (), X (Caixa,Origem) ())) -> X (Caixa,Origem) ()
 geneCalcOrigin = either geneCalcOrigin1 geneCalcOrigin2
 
-geneCalcOrigin1 :: Caixa -> X (Caixa,Origem) ()
-geneCalcOrigin1 c = Unid (c,(0,0))
+geneCalcOrigin1 :: (Caixa, Origem) -> X (Caixa,Origem) ()
+geneCalcOrigin1 c = Unid c
 
-geneCalcOrigin2 :: (Origem, X (Caixa,Origem) ()) -> X (Caixa,Origem) ()
-geneCalcOrigin2 (ori, Comp () (Unid (a, oria)) (Unid (b, orib))) = Comp () (Unid (a, oria + ori)) (Unid (b, orib + ori))
+geneCalcOrigin2 :: (Tipo, (X (Caixa,Origem) (), X (Caixa,Origem) ())) -> X (Caixa,Origem) ()
+geneCalcOrigin2 (tipo, (a, b)) = Comp () a b
 
 calc :: Tipo -> Origem -> (Float, Float) -> Origem
 calc Ht ori (dimx,dimy) = ((fst ori) + dimx, (snd ori) + dimy)
@@ -1283,11 +1280,18 @@ calc Vd ori (dimx,dimy) = ((fst ori) + dimx, (snd ori) + dimy)
 calc Ve ori (dimx,dimy) = (dimx, (snd ori) + dimy)
 calc V ori (dimx,dimy) =  ((fst ori) + dimx/2, (snd ori) + dimy)
 
+agrupCaixas :: X (Caixa,Origem) () -> Fig
+agrupCaixas = cataL2D flt
 
+flt :: Either (Caixa, Origem) ((), (Fig, Fig)) -> Fig
+flt = either (singl.swap) fltAux
+
+fltAux :: (b, ([a],[a])) -> [a]
+fltAux (b, (a1, a2)) = a1 ++ a2
 
 caixasAndOrigin2Pict = undefined
 
-escadinhasRed = (Right (Hb, (Comp Hb (Unid ((300,68),("C",G.red))) (Unid ((300,70),("C",G.red))), Comp Hb (Unid ((300,80),("C",G.red))) (Unid ((300,90),("C",G.red))))))
+escadinhasRed = (Right (Hb, (Comp Hb (Unid ((300,60),("C",G.red))) (Unid ((300,70),("C",G.red))), Comp Hb (Unid ((300,80),("C",G.red))) (Unid ((300,90),("C",G.red))))))
 
 \end{code}
 
