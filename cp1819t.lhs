@@ -113,7 +113,7 @@
 
 \begin{center}\large
 \begin{tabular}{ll}
-\textbf{Grupo} nr. & 007 (preencher)
+\textbf{Grupo} nr. & 007
 \\\hline
 a85813 & António Alexandre Carvalho Lindo
 \\
@@ -1385,14 +1385,22 @@ geneUntar (((a:int), b):outt) = (a, i2 ((int,b):(getPaths a outt))):(geneUntar (
 
 getPaths :: (Eq a) => a -> [(Path a, b)] -> [(Path a, b)]
 getPaths a [] = []
+getPaths a (([],b):pt) = (getPaths a pt)
 getPaths a (((h:t),b):pt) = if (a == h) then ((t,b):(getPaths a pt)) else (getPaths a pt)
 
 removePaths :: (Eq a) => a -> [(Path a, b)] -> [(Path a, b)]
 removePaths a [] = []
+removePaths a (([],b):pt) = (removePaths a pt)
 removePaths a (((h:t),b):pt) = if (a /= h) then (((h:t),b):(removePaths a pt)) else (removePaths a pt)
 
 find :: (Eq a) => a -> FS a b -> [Path a]
-find = undefined
+find a = cataFS (findGene a)
+
+findGene :: (Eq a) => a -> [(a, Either b [Path a])] -> [Path a]
+findGene a [] = []
+findGene a ((d, Left b):t) = if (a == d) then [d]:(findGene a t) else findGene a t
+findGene a ((d, Right []):t) = findGene a t
+findGene a ((d, Right (path:pt)):t) = if (elem a path) then (path:(findGene a ((d, i2 pt):t)))  else (findGene a ((d, i2 pt):t))
 
 new :: (Eq a) => Path a -> b -> FS a b -> FS a b
 new = undefined
