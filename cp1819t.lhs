@@ -1244,11 +1244,11 @@ geneDimen1 ((dimx, dimy), (s, color)) = (fromIntegral(dimx), fromIntegral(dimy))
 
 geneDimen2 :: (Tipo, ((Float, Float), (Float, Float))) -> (Float, Float)
 geneDimen2 (Ht, ((dimx1, dimy1), (dimx2, dimy2))) = (dimx1 + dimx2, dimy1 + dimy2)
-geneDimen2 (Hb, ((dimx1, dimy1), (dimx2, dimy2))) = (dimx1 + dimx2, max dimy1 (dimy2+dimy1/2))
-geneDimen2 (H, ((dimx1, dimy1), (dimx2, dimy2))) = (dimx1 + dimx2, max dimy1 dimy2)
+geneDimen2 (H, ((dimx1, dimy1), (dimx2, dimy2))) = (dimx1 + dimx2, max dimy1 (dimy2 + (dimy1/2)))
+geneDimen2 (Hb, ((dimx1, dimy1), (dimx2, dimy2))) = (dimx1 + dimx2, max dimy1 dimy2)
 geneDimen2 (Vd, ((dimx1, dimy1), (dimx2, dimy2))) = (dimx1 + dimx2, dimy1 + dimy2)
-geneDimen2 (Ve, ((dimx1, dimy1), (dimx2, dimy2))) = (max dimx1 (dimx2+dimx1/2), dimy1 + dimy2)
-geneDimen2 (V, ((dimx1, dimy1), (dimx2, dimy2))) = (max dimx1 dimx2, dimy1 + dimy2)
+geneDimen2 (V, ((dimx1, dimy1), (dimx2, dimy2))) = (max dimx1 (dimx2 + (dimx1/2)), dimy1 + dimy2)
+geneDimen2 (Ve, ((dimx1, dimy1), (dimx2, dimy2))) = (max dimx1 dimx2, dimy1 + dimy2)
 
 dimen :: X Caixa Tipo -> (Float, Float)
 dimen = cataL2D geneDimen
@@ -1275,10 +1275,10 @@ geneCalcOrigin2 (tipo, (a, b)) = Comp () a b
 calc :: Tipo -> Origem -> (Float, Float) -> Origem
 calc Ht ori (dimx,dimy) = ((fst ori) + dimx, (snd ori) + dimy)
 calc Hb ori (dimx,dimy) = ((fst ori) + dimx, (snd ori))
-calc H ori (dimx,dimy) = ((fst ori) + dimx, (snd ori) + dimy/2)
+calc H ori (dimx,dimy) = ((fst ori) + dimx, (snd ori) + (dimy/2))
 calc Vd ori (dimx,dimy) = ((fst ori) + dimx, (snd ori) + dimy)
 calc Ve ori (dimx,dimy) = (dimx, (snd ori) + dimy)
-calc V ori (dimx,dimy) =  ((fst ori) + dimx/2, (snd ori) + dimy)
+calc V ori (dimx,dimy) =  ((fst ori) + (dimx/2), (snd ori) + dimy)
 
 agrupCaixas :: X (Caixa,Origem) () -> Fig
 agrupCaixas = cataL2D flt
@@ -1289,9 +1289,28 @@ flt = either (singl.swap) fltAux
 fltAux :: (b, ([a],[a])) -> [a]
 fltAux (b, (a1, a2)) = a1 ++ a2
 
-caixasAndOrigin2Pict = undefined
+caixasAndOrigin2Pict :: (X Caixa Tipo, Origem) -> G.Picture
+caixasAndOrigin2Pict = cataCalcOrigin geneCaixasAndOrigin2Pict
 
-escadinhasRed = (Right (Hb, (Comp Hb (Unid ((300,60),("C",G.red))) (Unid ((300,70),("C",G.red))), Comp Hb (Unid ((300,80),("C",G.red))) (Unid ((300,90),("C",G.red))))))
+geneCaixasAndOrigin2Pict :: Either (Caixa,Origem) (Tipo, (G.Picture, G.Picture)) -> G.Picture
+geneCaixasAndOrigin2Pict = either geneCaixasAndOrigin2Pict1 geneCaixasAndOrigin2Pict2
+
+geneCaixasAndOrigin2Pict1 :: (Caixa,Origem) -> G.Picture
+geneCaixasAndOrigin2Pict1 (((dimx, dimy), (name, col)), (orix, oriy)) = G.translate orix oriy (G.pictures [(G.color col ((G.polygon caixa))), tnome])
+    where caixa = [(0, 0),(0, (fromIntegral dimy)),((fromIntegral dimx), (fromIntegral dimy)),((fromIntegral dimx), 0)]
+          tnome = G.translate ((fromIntegral dimx)/2) ((fromIntegral dimy)/2) (G.scale ((fromIntegral dimx)/800) ((fromIntegral dimy)/800) (G.text name))
+
+geneCaixasAndOrigin2Pict2 :: (Tipo, (G.Picture, G.Picture)) -> G.Picture
+geneCaixasAndOrigin2Pict2 (_, (pic1,pic2)) = G.pictures [pic1,pic2]
+
+primeirasEscadinhas :: X Caixa Tipo
+primeirasEscadinhas = Comp H (Comp H caixaA caixaB) (Comp H caixaC caixaD)
+     where caixaA = Unid ((200,200),("A",G.red))
+           caixaB = Unid ((180,180),("B",G.green))
+           caixaC = Unid ((160,160),("C",G.blue))
+           caixaD = Unid ((140,140),("D",G.yellow))
+
+main p = G.display (G.InWindow "CP" (1280, 720) (10, 10)) G.black (caixasAndOrigin2Pict p)
 
 \end{code}
 
