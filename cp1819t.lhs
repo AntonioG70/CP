@@ -119,7 +119,7 @@ a85813 & António Alexandre Carvalho Lindo
 \\
 a85919 & Pedro Dias Parente
 \\
-a85400 & Nuno Alves Azevedo da Cunha
+a85400 & Nuno Azevedo Alves da Cunha
 \end{tabular}
 \end{center}
 
@@ -1124,6 +1124,26 @@ outras funções auxiliares que sejam necessárias.
 
 \subsection*{Problema 1}
 
+Diagrama Catamorfismo calcula:\\
+\begin{eqnarray*}
+\xymatrix@@C=2cm{
+    |Expr|
+           \ar[d]_-{|cataExpr g|}
+           \ar[r]^-{|outExpr|}
+&
+    |Int + (Op X (Expr X Expr))|
+           \ar[d]^{|id + (id X (cataExpr g X cataExpr g)|}
+\\
+     |B|
+&
+     |1 + (Op X (B X B))|
+           \ar[l]^-{|g|}
+}
+\end{eqnarray*}
+Comentários:\\
+- A função geneCalcula recebe um Either Int (Op,(Int,Int)) e retorna um Int.\\
+- A função geneShow recebe um Either Int (Op,(String,String)) e retorna um String.\\
+- A função geneCompile recebe um Either () (Expr,[String]) e retorna um Codigo.\\
 \begin{code}
 
 inExpr :: Either Int (Op,(Expr,Expr)) -> Expr
@@ -1198,7 +1218,11 @@ compile = cataCompile geneCompile
 \end{code}
 
 \subsection*{Problema 2}
-
+Comentários:\\
+- A função geneDimen recebe um Either Caixa (Tipo, ((Float, Float), (Float, Float))) e retorna (Float, Float).\\
+- A função flt recebe um Either (Caixa, Origem) ((), (Fig, Fig))  e retorna uma Fig.\\
+- A função geneCaixasAndOrigin2Pict recebe um Either (Caixa,Origem) (Tipo, (G.Picture, G.Picture)) e retorna uma G.Picture.\\
+- A função geneCollectLeafs recebe Either a (b, ([a],[a])) e retorna uma lista de a.\\
 \begin{code}
 inL2D :: Either a (b, (X a b,X a b)) -> X a b
 inL2D = either auxInL2D1 auxInL2D2
@@ -1310,7 +1334,7 @@ primeirasEscadinhas = Comp H (Comp H caixaA caixaB) (Comp H caixaC caixaD)
            caixaC = Unid ((160,160),("C",G.blue))
            caixaD = Unid ((140,140),("D",G.yellow))
 
-main p = G.display (G.InWindow "CP" (1280, 720) (10, 10)) G.black (caixasAndOrigin2Pict p)
+mostra_caixas p = G.display (G.InWindow "CP" (1280, 720) (10, 10)) G.black (caixasAndOrigin2Pict p)
 
 \end{code}
 
@@ -1326,9 +1350,30 @@ cos' x = prj . for loop init where
 \end{code}
 
 \subsection*{Problema 4}
-Triologia ``ana-cata-hilo":
+Triologia ``ana-cata-hilo":\\
+Diagrama Catamorfismo calcula:
+\begin{eqnarray*}
+\xymatrix@@C=2cm{
+    |FS a b|
+           \ar[d]_-{|cataFS g|}
+           \ar[r]^-{|outFS|}
+&
+    |(a X (b X FS a b))*|
+           \ar[d]^{|map(id X (id + cataFS g))|}
+\\
+     |d|
+&
+     |(a X (b + d))*|
+           \ar[l]^-{|g|}
+}
+\end{eqnarray*}
+Comentários:\\
+- A função checkGene recebe [(a, Either b Bool)] e retorna Bool.\\
+- A função geneTar recebe [(a, Either b [(Path a, b)])] e retorna [(Path a, b)].\\
+- A função geneUntar recebe [(Path a, b)] e retorna  [(a, Either b [(Path a, b)])].\\
+- A função findGene recebe um a e um [(a, Either b [Path a])] e retorna [Path a].\\
 \begin{code}
--- b conteudo a nome
+
 outFS :: FS a b -> [(a, Either b (FS a b))]
 outFS (FS l) = map (id >< outNode) l
 
