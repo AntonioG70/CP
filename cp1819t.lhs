@@ -1328,29 +1328,68 @@ cos' x = prj . for loop init where
 \subsection*{Problema 4}
 Triologia ``ana-cata-hilo":
 \begin{code}
-outFS (FS l) = undefined
-outNode = undefined
+-- b conteudo a nome
+outFS :: FS a b -> [(a, Either b (FS a b))]
+outFS (FS l) = map (id >< outNode) l
 
-baseFS f g h = undefined
+outNode :: Node a b -> Either b (FS a b)
+outNode (File b) = i1 b
+outNode (Dir a) = i2 a
+
+baseFS f g h = map (f >< (g -|- h))
 
 cataFS :: ([(a, Either b c)] -> c) -> FS a b -> c
-cataFS g = undefined
+cataFS g = g . (recFS (cataFS g)) . outFS
 
 anaFS :: (c -> [(a, Either b c)]) -> c -> FS a b
-anaFS g = undefined
+anaFS g = inFS . (recFS (anaFS g) ) . g
 
-hyloFS g h = undefined
+hyloFS g h = cataFS g . anaFS h
+
 \end{code}
 Outras funções pedidas:
 \begin{code}
 check :: (Eq a) => FS a b -> Bool
-check = undefined
+check = cataFS checkGene
+
+checkGene :: (Eq a) => [(a, Either b Bool)] -> Bool
+checkGene [] = True
+checkGene ((a, Left b):t) = True && not (hasKey a t) && checkGene t
+checkGene ((a, Right b):t) = b && checkGene t
+
+hasKey :: Eq a => a -> [(a, b)] -> Bool
+hasKey _ [] = False
+hasKey a ((b,c):t) = (a == b) || (hasKey a t)
 
 tar :: FS a b -> [(Path a, b)]
-tar = undefined
+tar = cataFS geneTar
+
+geneTar :: [(a, Either b [(Path a, b)])] -> [(Path a, b)]
+geneTar [] = []
+geneTar ((a, Left b):t) = [([a],b)] ++ geneTar t
+--geneTar ((a, Right []):outt) = [([a], "")] ++ (geneTar outt)
+geneTar ((a, Right b):outt) = (addToPaths a b) ++ (geneTar outt)
+
+addToPaths :: a -> [(Path a, b)] -> [(Path a, b)]
+addToPaths _ [] = []
+addToPaths a ((p,cont):t) = ((a:p),cont):(addToPaths a t)
 
 untar :: (Eq a) => [(Path a, b)] -> FS a b
-untar = undefined
+untar = anaFS geneUntar
+
+geneUntar :: (Eq a) => [(Path a, b)] -> [(a, Either b [(Path a, b)])]
+geneUntar [] = []
+geneUntar (([],b):t) = geneUntar t
+geneUntar (([a],b):t) = (a, i1 b):(geneUntar t)
+geneUntar (((a:int), b):outt) = (a, i2 ((int,b):(getPaths a outt))):(geneUntar (removePaths a outt))
+
+getPaths :: (Eq a) => a -> [(Path a, b)] -> [(Path a, b)]
+getPaths a [] = []
+getPaths a (((h:t),b):pt) = if (a == h) then ((t,b):(getPaths a pt)) else (getPaths a pt)
+
+removePaths :: (Eq a) => a -> [(Path a, b)] -> [(Path a, b)]
+removePaths a [] = []
+removePaths a (((h:t),b):pt) = if (a /= h) then (((h:t),b):(removePaths a pt)) else (removePaths a pt)
 
 find :: (Eq a) => a -> FS a b -> [Path a]
 find = undefined
