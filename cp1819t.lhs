@@ -113,13 +113,13 @@
 
 \begin{center}\large
 \begin{tabular}{ll}
-\textbf{Grupo} nr. & 99 (preencher)
+\textbf{Grupo} nr. & 007 (preencher)
 \\\hline
-a11111 & Nome1 (preencher)
+a85813 & António Alexandre Carvalho Lindo
 \\
-a22222 & Nome2 (preencher)
+a85919 & Pedro Dias Parente
 \\
-a33333 & Nome3 (preencher)
+a85400 & Nuno Alves Azevedo da Cunha
 \end{tabular}
 \end{center}
 
